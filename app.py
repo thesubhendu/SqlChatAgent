@@ -7,7 +7,6 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 from langchain_community.utilities import SQLDatabase
 from langchain_openai import ChatOpenAI
-from langchain.chains import create_sql_query_chain
 from langchain_community.tools.sql_database.tool import QuerySQLDataBaseTool
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
@@ -38,6 +37,21 @@ app = FastAPI()
 
 # Initialize the database and LLM
 db = SQLDatabase.from_uri("sqlite:///Chinook.db")
+
+# Database connection details
+HOST = "3.139.130.189"
+USERNAME = "hariom"
+PASSWORD = "T22e66981D5NR"
+DATABASE = "forge"
+
+# Construct the connection URI
+connection_uri = f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}"
+
+# Initialize the database using the connection URI
+db = SQLDatabase.from_uri(connection_uri)
+
+
+
 llm = ChatOpenAI(model="gpt-4o")
 
 # Create the agent
@@ -45,27 +59,27 @@ toolkit = SQLDatabaseToolkit(db=db, llm=llm)
 tools = toolkit.get_tools()
 
 
-def query_as_list(db, query):
-    res = db.run(query)
-    res = [el for sub in ast.literal_eval(res) for el in sub if el]
-    res = [re.sub(r"\b\d+\b", "", string).strip() for string in res]
-    return list(set(res))
+# def query_as_list(db, query):
+#     res = db.run(query)
+#     res = [el for sub in ast.literal_eval(res) for el in sub if el]
+#     res = [re.sub(r"\b\d+\b", "", string).strip() for string in res]
+#     return list(set(res))
 
 
-artists = query_as_list(db, "SELECT Name FROM Artist")
-albums = query_as_list(db, "SELECT Title FROM Album")
+# artists = query_as_list(db, "SELECT Name FROM Artist")
+# albums = query_as_list(db, "SELECT Title FROM Album")
 
 
-vector_db = FAISS.from_texts(artists + albums, OpenAIEmbeddings())
-retriever = vector_db.as_retriever(search_kwargs={"k": 5})
-description = """Use to look up values to filter on. Input is an approximate spelling of the proper noun, output is valid proper nouns. Use the noun most similar to the search."""
-retriever_tool = create_retriever_tool(
-    retriever,
-    name="search_proper_nouns",
-    description=description,
-)
+# vector_db = FAISS.from_texts(artists + albums, OpenAIEmbeddings())
+# retriever = vector_db.as_retriever(search_kwargs={"k": 5})
+# description = """Use to look up values to filter on. Input is an approximate spelling of the proper noun, output is valid proper nouns. Use the noun most similar to the search."""
+# retriever_tool = create_retriever_tool(
+#     retriever,
+#     name="search_proper_nouns",
+#     description=description,
+# )
 
-tools.append(retriever_tool)
+# tools.append(retriever_tool)
 
 system = """You are an agent designed to interact with a SQL database.
 Given an input question, create a syntactically correct SQLite query to run, then look at the results of the query and return the answer.
