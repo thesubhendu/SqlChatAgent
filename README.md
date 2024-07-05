@@ -17,8 +17,8 @@ http://127.0.0.1:8000/query
   "question": "how many Employee?"
 }
 ``` 
-### Request Header (ask for key to Admin)
-`APIKEY`
+### Request Header 
+send key in header name `APIKEY` value you set on .env with key (ACCESS_TOKEN) 
 
 
 ## Response
