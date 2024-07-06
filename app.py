@@ -71,6 +71,7 @@ def create_conn_string(db: str) -> str:
         raise Exception("Not Supported DataBase")
 
 
+@lru_cache
 def get_database_engine(use_sqlite: Optional[bool] = False) -> SQLDatabase:
     if not use_sqlite:
         # Initialize the database and LLM
