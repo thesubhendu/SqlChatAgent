@@ -22,6 +22,7 @@ from typing import Optional
 from system import system
 from loguru import logger
 from models import Query
+from time import perf_counter
 
 # Load environment variables from .env file
 load_dotenv()
@@ -133,11 +134,12 @@ async def query_agent(
     agent: CompiledGraph = Depends(get_agent),
     api_key: str = Depends(get_api_key),
 ):
+    start = perf_counter()
     human_message = HumanMessage(content=request.question)
     response = []
     for s in agent.stream({"messages": [human_message]}):
         response.append(s)
-    return {"response": response}
+    return {"response": response, "time_taken": perf_counter() - start}
 
 
 if __name__ == "__main__":
