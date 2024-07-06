@@ -23,6 +23,7 @@ from system import system
 from loguru import logger
 from models import Query
 from time import perf_counter
+from functools import lru_cache
 
 # Load environment variables from .env file
 load_dotenv()
@@ -108,6 +109,7 @@ def get_database_engine(use_sqlite: Optional[bool] = False) -> SQLDatabase:
 # tools.append(retriever_tool)
 
 
+@lru_cache
 def get_agent(db: str = Depends(get_database_engine)) -> CompiledGraph:
     llm = ChatOpenAI(model="gpt-4o")
 
