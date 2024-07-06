@@ -3,8 +3,10 @@
 ## How to run app
 1. Clone the repo
 2. create .env, `cp .env.example .env`
-3. `pip install -r requirements.txt`
-4. `uvicorn app:app --reload`
+3. create virtual environment `python3 -m venv venv --prompt chat-agent`
+4. activate virtual environment `source venv/bin/activate` 
+5. install required packages `pip install -r requirements.txt`
+6. start asgi server `uvicorn app:app --reload`
 
 
 ## API ENDPOINT
