@@ -26,11 +26,13 @@ API_KEY = os.getenv("API_KEY")
 API_KEY_NAME = os.getenv("ACCESS_TOKEN")
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 
+
 def get_api_key(api_key_header: str = Depends(api_key_header)):
     if api_key_header == API_KEY:
         return api_key_header
     else:
         raise HTTPException(status_code=403, detail="Could not validate credentials")
+
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -39,17 +41,16 @@ app = FastAPI()
 db = SQLDatabase.from_uri("sqlite:///Chinook.db")
 
 # Database connection details
-HOST = "3.139.130.189"
-USERNAME = "hariom"
-PASSWORD = "T22e66981D5NR"
-DATABASE = "forge"
+HOST = os.environ.get("DB_HOST")
+USERNAME = os.environ.get("DB_USER")
+PASSWORD = os.environ.get("DB_PASSWORD")
+DATABASE = os.environ.get("DB_NAME")
 
 # Construct the connection URI
 connection_uri = f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}"
 
 # Initialize the database using the connection URI
 db = SQLDatabase.from_uri(connection_uri)
-
 
 
 llm = ChatOpenAI(model="gpt-4o")
@@ -103,9 +104,11 @@ system_message = SystemMessage(content=system)
 
 agent = create_react_agent(llm, tools, messages_modifier=system_message)
 
+
 # Define Pydantic model
 class Query(BaseModel):
     question: str
+
 
 # Define endpoint
 @app.post("/query")
@@ -116,6 +119,8 @@ async def query_agent(request: Query, api_key: str = Depends(get_api_key)):
         response.append(s)
     return {"response": response}
 
+
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
