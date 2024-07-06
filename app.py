@@ -35,7 +35,7 @@ api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 
 
 def get_api_key(api_key_header: str = Depends(api_key_header)):
-    print(api_key_header, API_KEY_NAME, API_KEY)
+    # print(api_key_header, API_KEY_NAME, API_KEY)
     if api_key_header == API_KEY:
         return api_key_header
     else:
@@ -125,6 +125,9 @@ def get_agent(db: str = Depends(get_database_engine)) -> CompiledGraph:
 
 
 # Define Pydantic model
+@app.get("/")
+async def hello(api_key: str = Depends(get_api_key)):
+    return {"msg": "Hello"}
 
 
 # Define endpoint
