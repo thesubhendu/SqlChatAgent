@@ -30,14 +30,13 @@ load_dotenv()
 
 # just defining the OPENAI_API_KEY will help us authenticate with the openapi api
 # Set up API key authentication
-API_KEY = os.getenv("OPENAI_API_KEY")
-API_KEY_NAME = os.getenv("ACCESS_TOKEN")
-api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
+# API_KEY = os.getenv("OPENAI_API_KEY")
+ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
+api_key_header = APIKeyHeader(name="ACCESS_TOKEN", auto_error=False)
 
 
 def get_api_key(api_key_header: str = Depends(api_key_header)):
-    # print(api_key_header, API_KEY_NAME, API_KEY)
-    if api_key_header == API_KEY:
+    if api_key_header == ACCESS_TOKEN:
         return api_key_header
     else:
         raise HTTPException(status_code=403, detail="Could not validate credentials")
@@ -64,8 +63,8 @@ def create_conn_string(db: str) -> str:
 
     if db.lower() == "mysql":
         return f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}"
-    elif "postgres" in db.lower():  # postgres can be given as postgresql also
-        return f"postgresql+psycopg2://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}"
+    # elif "postgres" in db.lower():  # postgres can be given as postgresql also
+    #     return f"postgresql+psycopg2://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}"
     else:
         logger.exception("Not Supported Database, only supports postgres and mysql")
         raise Exception("Not Supported DataBase")
@@ -85,29 +84,6 @@ def get_database_engine(use_sqlite: Optional[bool] = False) -> SQLDatabase:
     db = SQLDatabase.from_uri(connection_uri)
 
     return db
-
-
-# def query_as_list(db, query):
-#     res = db.run(query)
-#     res = [el for sub in ast.literal_eval(res) for el in sub if el]
-#     res = [re.sub(r"\b\d+\b", "", string).strip() for string in res]
-#     return list(set(res))
-
-
-# artists = query_as_list(db, "SELECT Name FROM Artist")
-# albums = query_as_list(db, "SELECT Title FROM Album")
-
-
-# vector_db = FAISS.from_texts(artists + albums, OpenAIEmbeddings())
-# retriever = vector_db.as_retriever(search_kwargs={"k": 5})
-# description = """Use to look up values to filter on. Input is an approximate spelling of the proper noun, output is valid proper nouns. Use the noun most similar to the search."""
-# retriever_tool = create_retriever_tool(
-#     retriever,
-#     name="search_proper_nouns",
-#     description=description,
-# )
-
-# tools.append(retriever_tool)
 
 
 @lru_cache

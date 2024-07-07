@@ -20,7 +20,7 @@ http://127.0.0.1:8000/query
 }
 ``` 
 ### Request Header 
-send key in header name `APIKEY` value you set on .env with key (ACCESS_TOKEN) 
+send key in header name `ACCESS_TOKEN` value you set on .env with key (ACCESS_TOKEN) 
 
 
 ## Response
