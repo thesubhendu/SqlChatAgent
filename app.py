@@ -63,20 +63,15 @@ def create_conn_string(db: str) -> str:
 
     if db.lower() == "mysql":
         return f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}"
-    # elif "postgres" in db.lower():  # postgres can be given as postgresql also
-    #     return f"postgresql+psycopg2://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}"
+    elif "postgres" in db.lower():  # postgres can be given as postgresql also
+        return f"postgresql+psycopg2://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}"
     else:
         logger.exception("Not Supported Database, only supports postgres and mysql")
         raise Exception("Not Supported DataBase")
 
 
 @lru_cache
-def get_database_engine(use_sqlite: Optional[bool] = False) -> SQLDatabase:
-    if not use_sqlite:
-        # Initialize the database and LLM
-        db = SQLDatabase.from_uri("sqlite:///Chinook.db")
-        return db
-
+def get_database_engine() -> SQLDatabase:
     # Construct the connection URI
     connection_uri = create_conn_string(os.environ.get("DB_TYPE"))
 
