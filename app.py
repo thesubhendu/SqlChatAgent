@@ -76,7 +76,8 @@ def get_database_engine() -> SQLDatabase:
     connection_uri = create_conn_string(os.environ.get("DB_TYPE"))
 
     # Initialize the database using the connection URI
-    db = SQLDatabase.from_uri(connection_uri)
+    db = SQLDatabase.from_uri(connection_uri, lazy_table_reflection=True)
+    # db = SQLDatabase.from_uri(connection_uri)
 
     return db
 
