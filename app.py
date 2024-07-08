@@ -70,7 +70,7 @@ def create_conn_string(db: str) -> str:
         raise Exception("Not Supported DataBase")
 
 
-@lru_cache
+
 def get_database_engine() -> SQLDatabase:
     # Construct the connection URI
     connection_uri = create_conn_string(os.environ.get("DB_TYPE"))
